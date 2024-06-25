@@ -16,8 +16,6 @@ set(SOURCES ${SOURCES})
 add_executable(${APP_NAME} ${SOURCES})
 
 # include the library:
-target_include_directories(${APP_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/${CMAKE_PROJECT_NAME}/library/include)
-target_link_directories(${APP_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/${CMAKE_PROJECT_NAME}/library/src)
 target_link_libraries(${APP_NAME} PRIVATE {{REPLACE_ME_LIB_NAME}})
 
 target_link_libraries(${APP_NAME} PRIVATE ${SANITIZER_FLAGS})

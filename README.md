@@ -46,7 +46,8 @@ Tests are run as one executable for app and another for library.
 - `./setup.sh`
 - `cmake --preset=default -DCMAKE_BUILD_TYPE=Debug -DENABLE_CATCH2_TESTS=ON -DENABLE_GLOBS=ON`
   add {{REPLACE_ME_PROJECT_NAME}}\_ before the opts
-- `ninja -C build/default -j 24`
+- `cmake --build ./build/default`
+  - `ninja -C build/default -j 24`
 - cd build/default && ctest -C Debug --output-on-failure --verbose
 
 ## Project Structure
