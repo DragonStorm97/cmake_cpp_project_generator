@@ -26,16 +26,12 @@ function(add_catch2_tests app_name is_lib)
 
     # add the app as a dependency if it's not the library
     if(NOT IS_LIB)
-      target_include_directories(${test_name} PUBLIC ${PROJECT_SOURCE_DIR}/${CMAKE_PROJECT_NAME}/app/include)
+      target_include_directories(${test_name} PUBLIC ${PROJECT_SOURCE_DIR}/${CMAKE_PROJECT_NAME}/apps/${app_name}/include)
     endif()
 
     target_link_libraries(${test_name} PRIVATE Catch2::Catch2WithMain)
 
-    if(IS_LIB)
-      catch_discover_tests(${test_name} TEST_PREFIX ${app_name} LABEL "LIB")
-    else()
-      catch_discover_tests(${test_name} TEST_PREFIX ${app_name} LABEL "app")
-    endif()
+    catch_discover_tests(${test_name} LABEL ${app_name})
 
   endif()
 endfunction()

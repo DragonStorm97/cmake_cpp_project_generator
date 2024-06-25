@@ -3,6 +3,7 @@
 # TODO: vars! (arguments/prompt user!)
 PROJECT_NAME=coolProject
 STD_VERSION=20
+APPS=(app example-one repl)
 
 # remove the generated directory if it exists:
 rm -rf generated/
@@ -20,28 +21,47 @@ rm -rf setup.sh README.md .git
 
 # replace the vars with the ones provided by the user:
 
-# TODO: improve with a loop, etc.
+function create_and_replace {
+  declare -n replace_map=$1  # Reference to the replacement map
+
+  for SEARCH_STRING in "${!replace_map[@]}"; do
+    REPLACE_STRING="${replace_map[$SEARCH_STRING]}"
+    echo Replacing ${SEARCH_STRING} with ${REPLACE_STRING}
+    # text replace:
+    grep "${SEARCH_STRING}" . -lr | xargs sed -i "s/${SEARCH_STRING}/${REPLACE_STRING}/g"
+
+    # file and folder renames:
+    # Define the string to replace and the replacement string
+
+    # Rename directories first to avoid issues with files inside renamed directories
+    find . -depth -name "*$SEARCH_STRING*" | while IFS= read -r file; do
+      # Determine the new name
+      new_name="$(dirname "$file")/$(basename "$file" | sed "s/$SEARCH_STRING/$REPLACE_STRING/g")"
+      # Rename the file or directory
+      mv "$file" "$new_name"
+    done
+  done
+}
+
 declare -A REPLACE_MAP=(
   [{{REPLACE_ME_PROJECT_NAME}}]=${PROJECT_NAME}
-  [{{REPLACE_ME_APP_NAME}}]=${PROJECT_NAME}app
+  # [{{REPLACE_ME_APP_NAME}}]=${PROJECT_NAME}app
   [{{REPLACE_ME_LIB_NAME}}]=lib${PROJECT_NAME}
   [{{REPLACE_ME_STD_VERSION}}]=${STD_VERSION}
 )
 
-for SEARCH_STRING in "${!REPLACE_MAP[@]}"; do
-  REPLACE_STRING="${REPLACE_MAP[$SEARCH_STRING]}"
-  echo Replacing ${SEARCH_STRING} with ${REPLACE_STRING}
-  # text replace:
-  grep "${SEARCH_STRING}" . -lr | xargs sed -i "s/${SEARCH_STRING}/${REPLACE_STRING}/g"
+create_and_replace REPLACE_MAP
 
-  # file and folder renames:
-  # Define the string to replace and the replacement string
+for app in "${APPS[@]}"; do
+  echo Creating app $app
+  # Create the target directory if it doesn't exist
+  mkdir -p "$PROJECT_NAME/apps/$app"
 
-  # Rename directories first to avoid issues with files inside renamed directories
-  find . -depth -name "*$SEARCH_STRING*" | while IFS= read -r file; do
-    # Determine the new name
-    new_name="$(dirname "$file")/$(basename "$file" | sed "s/$SEARCH_STRING/$REPLACE_STRING/g")"
-    # Rename the file or directory
-    mv "$file" "$new_name"
-  done
+  # Copy the contents of the template directory into the target directory
+  cp -r "$PROJECT_NAME/apps/template"/* "$PROJECT_NAME/apps/$app/"
+  cd "$PROJECT_NAME/apps/$app/"
+  declare -A REPMAP=([{{REPLACE_ME_APP_NAME}}]=$app)
+  create_and_replace REPMAP
+  cd ../../../
 done
+rm -Rf "$PROJECT_NAME/apps/template"

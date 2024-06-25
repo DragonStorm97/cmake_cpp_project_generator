@@ -9,11 +9,12 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set({{REPLACE_ME_PROJECT_NAME}}_IS_TOP_LEVEL_PROJECT TRUE)
 endif()
 
-# Generate compile_commands.json
 if({{REPLACE_ME_PROJECT_NAME}}_IS_TOP_LEVEL_PROJECT)
+  # Generate compile_commands.json
   set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
   option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_CATCH2_TESTS "Enable Tests for {{REPLACE_ME_PROJECT_NAME}}" ON)
   option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_GLOBS "Enable GLOB sourcing for {{REPLACE_ME_PROJECT_NAME}}" ON)
+  option({{REPLACE_ME_PROJECT_NAME}}_BUILD_APPS "Enable App building for {{REPLACE_ME_PROJECT_NAME}}" ON)
   # create a symbolic link to the compile_commands file:
   file(
     CREATE_LINK
@@ -21,8 +22,6 @@ if({{REPLACE_ME_PROJECT_NAME}}_IS_TOP_LEVEL_PROJECT)
     compile_commands.json
     COPY_ON_ERROR
     SYMBOLIC)
-  # we only include the app in top-level builds
-  add_subdirectory(${CMAKE_PROJECT_NAME}/app/src)
 else()
   # disable tests if we're a sub-project
   set({{REPLACE_ME_PROJECT_NAME}}_ENABLE_CATCH2_TESTS FALSE)
@@ -59,10 +58,21 @@ if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_CATCH2_TESTS)
     list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/extras)
   endif()
   include(Catch)
-endif()
 
-if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_CATCH2_TESTS)
   include(cmake/AddCatch2Tests.cmake)
   add_subdirectory(${CMAKE_PROJECT_NAME}/library/tests)
-  add_subdirectory(${CMAKE_PROJECT_NAME}/app/tests)
+endif()
+
+if({{REPLACE_ME_PROJECT_NAME}}_BUILD_APPS)
+  # loop through each directory and add their sources, etc. to their own executable
+  file(GLOB found_folders LIST_DIRECTORIES true ${CMAKE_PROJECT_NAME}/apps/*)
+  foreach(folder ${found_folders})
+    if(IS_DIRECTORY ${folder})
+      message(STATUS "adding folder as app: ${folder}")
+      add_subdirectory(${folder}/src/)
+      if(coolProject_ENABLE_CATCH2_TESTS)
+        add_subdirectory(${folder}/tests/)
+      endif()
+    endif()
+  endforeach()
 endif()

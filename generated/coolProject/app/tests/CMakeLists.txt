@@ -1,1 +1,0 @@
-add_catch2_tests(coolProjectapp FALSE)
