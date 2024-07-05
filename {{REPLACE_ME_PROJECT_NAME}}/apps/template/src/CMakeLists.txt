@@ -18,6 +18,25 @@ add_executable(${APP_NAME} ${SOURCES})
 # include the library:
 target_link_libraries(${APP_NAME} PRIVATE {{REPLACE_ME_LIB_NAME}})
 
+if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB)
+  #set(raylib_VERBOSE 1)
+  target_link_libraries(${APP_NAME} PRIVATE raylib)
+
+  # Web Configurations
+  if(${PLATFORM} STREQUAL "Web")
+    # Tell Emscripten to build an example.html file.
+    set_target_properties(${APP_NAME} PROPERTIES SUFFIX ".html")
+    target_link_options(${APP_NAME} PUBLIC "-sUSE_GLFW=3")
+  endif()
+
+  # Checks if OSX and links appropriate frameworks (Only required on MacOS)
+  if(APPLE)
+    target_link_libraries(${APP_NAME} "-framework IOKit")
+    target_link_libraries(${APP_NAME} "-framework Cocoa")
+    target_link_libraries(${APP_NAME} "-framework OpenGL")
+  endif()
+endif()
+
 target_link_libraries(${APP_NAME} PRIVATE ${SANITIZER_FLAGS})
 target_include_directories(${APP_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include/${CMAKE_PROJECT_NAME})
 target_include_directories(${APP_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/${CMAKE_PROJECT_NAME}/apps/${APP_NAME}/include)

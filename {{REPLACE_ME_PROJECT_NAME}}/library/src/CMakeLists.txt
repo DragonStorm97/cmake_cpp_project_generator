@@ -13,7 +13,29 @@ else()
   set(SOURCES "${LIB_NAME}.cpp")
 endif()
 
+# Note: for header-only libraries change all PUBLIC flags to INTERFACE and create an interface
+# target: add_library(${PROJECT_NAME} INTERFACE)
+
 add_library(${LIB_NAME} STATIC ${SOURCES})
+
+if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB)
+  #set(raylib_VERBOSE 1)
+  target_link_libraries(${PROJECT_NAME} raylib)
+
+  # Web Configurations
+  if(${PLATFORM} STREQUAL "Web")
+    # Tell Emscripten to build an example.html file.
+    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
+    target_link_options(${PROJECT_NAME} PUBLIC "-sUSE_GLFW=3")
+  endif()
+
+  # Checks if OSX and links appropriate frameworks (Only required on MacOS)
+  if(APPLE)
+    target_link_libraries(${PROJECT_NAME} "-framework IOKit")
+    target_link_libraries(${PROJECT_NAME} "-framework Cocoa")
+    target_link_libraries(${PROJECT_NAME} "-framework OpenGL")
+  endif()
+endif()
 
 set_target_properties(${LIB_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(${LIB_NAME} PUBLIC cxx_std_{{REPLACE_ME_STD_VERSION}})
@@ -21,3 +43,9 @@ target_compile_options(${LIB_NAME} PRIVATE ${SANITIZER_FLAGS} ${DEFAULT_COMPILER
 target_link_libraries(${LIB_NAME} PRIVATE ${SANITIZER_FLAGS})
 target_include_directories(${LIB_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include/${CMAKE_PROJECT_NAME})
 target_include_directories(${LIB_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/${CMAKE_PROJECT_NAME}/library/include)
+
+# TODO: look into the BUILD/INSTALL_INTERFACT macros:
+# target_include_directories(
+#   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+#                          $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
+# )

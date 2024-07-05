@@ -3,6 +3,13 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 project("{{REPLACE_ME_PROJECT_NAME}}" LANGUAGES CXX)
 
+if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+  message(
+    FATAL_ERROR
+      "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
+  )
+endif()
+
 # Check if the project is the top-level project
 set({{REPLACE_ME_PROJECT_NAME}}_IS_TOP_LEVEL_PROJECT FALSE)
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
@@ -14,6 +21,7 @@ if({{REPLACE_ME_PROJECT_NAME}}_IS_TOP_LEVEL_PROJECT)
   set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
   option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_CATCH2_TESTS "Enable Tests for {{REPLACE_ME_PROJECT_NAME}}" ON)
   option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_GLOBS "Enable GLOB sourcing for {{REPLACE_ME_PROJECT_NAME}}" ON)
+  option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB "Enable Ra[lib for {{REPLACE_ME_PROJECT_NAME}}" OFF)
   option({{REPLACE_ME_PROJECT_NAME}}_BUILD_APPS "Enable App building for {{REPLACE_ME_PROJECT_NAME}}" ON)
   # create a symbolic link to the compile_commands file:
   file(
@@ -61,6 +69,48 @@ if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_CATCH2_TESTS)
 
   include(cmake/AddCatch2Tests.cmake)
   add_subdirectory(${CMAKE_PROJECT_NAME}/library/tests)
+endif()
+
+# Web Configurations
+if(${PLATFORM} STREQUAL "Web")
+  message("#######${PLATFORM}#####")
+  # add emscripten include directory to a .clangd file
+  # as we want the LSP to be happy, but not effect the build! (not we include the systroot emscripten, but the system includes to help with linter errors)
+  file(WRITE ".clangd" "CompileFlags:\n  Add:\n    - \"-I${EMSDK}/upstream/emscripten/cache/sysroot/include/emscripten\"\n    - \"-I${EMSDK}/upstream/emscripten/system/include/\"")
+  # file(WRITE ".clangd" "CompileFlags:\n  Add:\n    - \"-I${EMSDK}/upstream/emscripten/cache/sysroot/include/\"")
+  # file(WRITE ".clangd" "CompileFlags:\n  Add:\n    - \"-I${EMSDK}/upstream/emscripten/system/include/\"")
+
+  # include_directories(${EMSDK}/upstream/emscripten/cache/sysroot/include/)
+  # add_compile_options(-I${EMSDK}/upstream/emscripten/cache/sysroot/include/emscripten)
+  # include_directories(SYSTEM ${EMSDK}/upstream/emscripten/system/include/)
+endif()
+
+# raylib:
+if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB)
+  option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB "Enable Raylib for aweomium" ON)
+  set(RAYLIB_VERSION 5.0)
+  find_package(raylib ${RAYLIB_VERSION} QUIET) # QUIET or REQUIRED
+  if(NOT raylib_FOUND) # If there's none, fetch and build raylib
+    include(FetchContent)
+    FetchContent_Declare(
+      raylib
+      DOWNLOAD_EXTRACT_TIMESTAMP OFF
+      URL https://github.com/raysan5/raylib/archive/refs/tags/${RAYLIB_VERSION}.tar.gz
+    )
+    FetchContent_GetProperties(raylib)
+    if(NOT raylib_POPULATED) # Have we downloaded raylib yet?
+      set(FETCHCONTENT_QUIET NO)
+      FetchContent_Populate(raylib)
+      set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # don't build the supplied examples
+      add_subdirectory(${raylib_SOURCE_DIR} ${raylib_BINARY_DIR})
+    endif()
+  endif()
+
+  # add_custom_command(
+  #   TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+  #   COMMENT "Copy Resources"
+  #   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/resources
+  #   DEPENDS ${CMAKE_PROJECT_NAME})
 endif()
 
 if({{REPLACE_ME_PROJECT_NAME}}_BUILD_APPS)
