@@ -20,20 +20,20 @@ add_library(${LIB_NAME} STATIC ${SOURCES})
 
 if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB)
   #set(raylib_VERBOSE 1)
-  target_link_libraries(${PROJECT_NAME} raylib)
+  target_link_libraries(${LIB_NAME} raylib)
 
   # Web Configurations
   if(${PLATFORM} STREQUAL "Web")
     # Tell Emscripten to build an example.html file.
-    set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
-    target_link_options(${PROJECT_NAME} PUBLIC "-sUSE_GLFW=3")
+    set_target_properties(${LIB_NAME} PROPERTIES SUFFIX ".html")
+    target_link_options(${LIB_NAME} PUBLIC "-sUSE_GLFW=3")
   endif()
 
   # Checks if OSX and links appropriate frameworks (Only required on MacOS)
   if(APPLE)
-    target_link_libraries(${PROJECT_NAME} "-framework IOKit")
-    target_link_libraries(${PROJECT_NAME} "-framework Cocoa")
-    target_link_libraries(${PROJECT_NAME} "-framework OpenGL")
+    target_link_libraries(${LIB_NAME} "-framework IOKit")
+    target_link_libraries(${LIB_NAME} "-framework Cocoa")
+    target_link_libraries(${LIB_NAME} "-framework OpenGL")
   endif()
 endif()
 

@@ -15,7 +15,7 @@ function(add_catch2_tests app_name is_lib)
 
     # build a second version of the test with STATIC_REQUIRE as REQUIRE to debug constexpr test failures
     set(test_names relaxed_constexpr_${app_test_name} ${app_test_name})
-    foreach(test_name IN LIST test_names)
+    foreach(test_name IN LISTS test_names)
       add_executable(${test_name} ${sources})
 
       set_target_properties(${test_name} PROPERTIES CXX_EXTENSIONS OFF)

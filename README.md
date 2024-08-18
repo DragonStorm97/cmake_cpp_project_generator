@@ -39,10 +39,11 @@ Basically just this: [catch2-examples](https://github.com/Toxe/catch2-examples)
 
 ## CMake vars
 
-- {{REPLACE_ME_PROJECT_NAME}}\_ENABLE_RAYLIB
-- {{REPLACE_ME_PROJECT_NAME}}\_ENABLE_GLOBS
+- `{{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB`
+- `{{REPLACE_ME_PROJECT_NAME}}_ENABLE_GLOBS`
   Set if we just want to use the default templated CMakeLists.txt to glob all source files under their directory.
-- {{REPLACE_ME_PROJECT_NAME}}\_ENABLE_CATCH2_TESTS
+- `{{REPLACE_ME_PROJECT_NAME}}_ENABLE_CATCH2_TESTS`
+- `{{REPLACE_ME_PROJECT_NAME}}_ENABLE_FLECS`
 
 ## Tests
 

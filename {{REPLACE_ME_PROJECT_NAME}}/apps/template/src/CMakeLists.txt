@@ -37,6 +37,10 @@ if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB)
   endif()
 endif()
 
+if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_FLECS)
+  target_link_libraries(${APP_NAME} PRIVATE flecs::flecs_static)
+endif()
+
 target_link_libraries(${APP_NAME} PRIVATE ${SANITIZER_FLAGS})
 target_include_directories(${APP_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include/${CMAKE_PROJECT_NAME})
 target_include_directories(${APP_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/${CMAKE_PROJECT_NAME}/apps/${APP_NAME}/include)

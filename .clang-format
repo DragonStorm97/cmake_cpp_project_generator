@@ -9,4 +9,4 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 SpaceAfterCStyleCast: true
 SpaceBeforeCpp11BracedList: false
 SpacesBeforeTrailingComments: 2
-TabWidth: 4
+TabWidth: 2

@@ -21,7 +21,8 @@ if({{REPLACE_ME_PROJECT_NAME}}_IS_TOP_LEVEL_PROJECT)
   set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
   option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_CATCH2_TESTS "Enable Tests for {{REPLACE_ME_PROJECT_NAME}}" ON)
   option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_GLOBS "Enable GLOB sourcing for {{REPLACE_ME_PROJECT_NAME}}" ON)
-  option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB "Enable Ra[lib for {{REPLACE_ME_PROJECT_NAME}}" OFF)
+  option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB "Enable Raylib for {{REPLACE_ME_PROJECT_NAME}}" OFF)
+  option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_FLECS "Enable flecs for {{REPLACE_ME_PROJECT_NAME}}" OFF)
   option({{REPLACE_ME_PROJECT_NAME}}_BUILD_APPS "Enable App building for {{REPLACE_ME_PROJECT_NAME}}" ON)
   # create a symbolic link to the compile_commands file:
   file(
@@ -87,7 +88,6 @@ endif()
 
 # raylib:
 if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB)
-  option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB "Enable Raylib for aweomium" ON)
   set(RAYLIB_VERSION 5.0)
   find_package(raylib ${RAYLIB_VERSION} QUIET) # QUIET or REQUIRED
   if(NOT raylib_FOUND) # If there's none, fetch and build raylib
@@ -111,6 +111,26 @@ if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB)
   #   COMMENT "Copy Resources"
   #   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/resources
   #   DEPENDS ${CMAKE_PROJECT_NAME})
+endif()
+
+# flecs:
+if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_FLECS)
+  set(FLECS_VERSION 4.0.0)
+  find_package(flecs ${FLECS_VERSION} QUIET) # QUIET or REQUIRED
+  if(NOT flecs_FOUND) # If there's none, fetch and build flecs
+    include(FetchContent)
+    FetchContent_Declare(
+      flecs
+      DOWNLOAD_EXTRACT_TIMESTAMP OFF
+      URL https://github.com/SanderMertens/flecs/archive/refs/tags/v${FLECS_VERSION}.tar.gz
+    )
+    FetchContent_GetProperties(flecs)
+    if(NOT flecs_POPULATED) # Have we downloaded flecs yet?
+      set(FETCHCONTENT_QUIET NO)
+      FetchContent_Populate(flecs)
+      add_subdirectory(${flecs_SOURCE_DIR} ${flecs_BINARY_DIR})
+    endif()
+  endif()
 endif()
 
 if({{REPLACE_ME_PROJECT_NAME}}_BUILD_APPS)
