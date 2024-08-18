@@ -51,6 +51,9 @@ cd generated
 # remove the unwanted files:
 rm -Rf setup.sh README.md .git/
 
+# rename to tocopy.github .github
+mv tocopy.github/ .github/
+
 # replace the vars with the ones provided by the user:
 
 function create_and_replace {
