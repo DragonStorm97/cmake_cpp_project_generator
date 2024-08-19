@@ -5,10 +5,6 @@ Basically just this: [catch2-examples](https://github.com/Toxe/catch2-examples)
 ## To-Do
 
 - Update setup.sh
-  - REPLACE_ME_PROJECT_NAME
-  - REPLACE_ME_APP_NAME
-  - REPLACE_ME_LIB_NAME
-  - REPLACE_ME_STD_VERSION
   - Single vs multi-binary test output
   - Some menu for adding more project libraries?
   - Some menu for adding more dependencies?
@@ -16,6 +12,7 @@ Basically just this: [catch2-examples](https://github.com/Toxe/catch2-examples)
 - make [fetchcontent-able](https://www.foonathan.net/2022/06/cmake-fetchcontent/)
 - Refine cicd workflow preset
 - update cicd build-and-test workflow to use a matrix
+- Add Code Coverage to the GitHub workflow
 - CPack/Packaging workflow
 - Extra Libraries (toggled with flags, and using emscripten ports where possible)
 - Ability to add more libraries? (maybe one primary shared library,
@@ -29,7 +26,9 @@ Basically just this: [catch2-examples](https://github.com/Toxe/catch2-examples)
 
 ## Features
 
-- src as lib or app
+- Project, apps, and library names
+- specify cpp version
+- source as lib or app
   - have the templates in `src/REPLACE_ME_LIB_NAME` and `src/REPLACE_ME_APP_NAME`
   - `include/` folder
 - GitHub Actions Workflow
