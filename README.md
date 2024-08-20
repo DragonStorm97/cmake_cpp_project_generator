@@ -64,6 +64,7 @@ Tests are run as one executable for app and another for library.
 - `cmake --build ./build/default`
   - `ninja -C build/default -j 24`
 - cd build/default && ctest -C Debug --output-on-failure --verbose
+- or just: `cmake --workflow --preset=default -DENABLE_CATCH2_TESTS=ON -DENABLE_GLOBS=ON`
 
 ## Project Structure
 
