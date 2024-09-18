@@ -4,6 +4,7 @@ Basically just this: [catch2-examples](https://github.com/Toxe/catch2-examples)
 
 ## To-Do
 
+- NB: we need to actually get tests to import the bloody app they're supposed to be testing!
 - Update setup.sh
   - Single vs multi-binary test output
   - Some menu for adding more project libraries?

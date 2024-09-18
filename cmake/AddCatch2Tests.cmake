@@ -1,6 +1,6 @@
 # TODO: add docstring
 
-function(add_catch2_tests app_name is_lib)
+function(add_catch2_tests app_name is_lib is_standalone)
   if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_CATCH2_TESTS)
     set(app_test_name ${app_name}_tests)
     if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_GLOBS)
@@ -24,14 +24,20 @@ function(add_catch2_tests app_name is_lib)
 
       # Add library as dependency
       target_include_directories(${test_name} PUBLIC ${PROJECT_SOURCE_DIR}/include/${CMAKE_PROJECT_NAME})
-      target_include_directories(${test_name} PUBLIC ${PROJECT_SOURCE_DIR}/${CMAKE_PROJECT_NAME}/library/include)
+      if(NOT is_standalone)
+        target_include_directories(${test_name} PUBLIC ${PROJECT_SOURCE_DIR}/${CMAKE_PROJECT_NAME}/library/include)
+      endif()
 
       # add the app as a dependency if it's not the library
-      if(NOT IS_LIB)
+      if(NOT is_lib AND NOT is_standalone)
         target_include_directories(${test_name} PUBLIC ${PROJECT_SOURCE_DIR}/${CMAKE_PROJECT_NAME}/apps/${app_name}/include)
       endif()
 
-      target_link_libraries(${test_name} PRIVATE {{REPLACE_ME_LIB_NAME}} Catch2::Catch2WithMain)
+      if(NOT is_standalone)
+        target_link_libraries(${test_name} PRIVATE {{REPLACE_ME_LIB_NAME}})
+      endif()
+      # target_link_libraries(${test_name} PRIVATE ${app_name} Catch2::Catch2WithMain)
+      target_link_libraries(${test_name} PRIVATE Catch2::Catch2WithMain)
 
       catch_discover_tests(${test_name} LABEL ${app_name})
 

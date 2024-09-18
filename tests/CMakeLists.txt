@@ -1,0 +1,1 @@
+add_catch2_tests({{REPLACE_ME_PROJECT_NAME}} FALSE TRUE)

@@ -21,9 +21,10 @@ if({{REPLACE_ME_PROJECT_NAME}}_IS_TOP_LEVEL_PROJECT)
   set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
   option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_CATCH2_TESTS "Enable Tests for {{REPLACE_ME_PROJECT_NAME}}" ON)
   option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_GLOBS "Enable GLOB sourcing for {{REPLACE_ME_PROJECT_NAME}}" ON)
-  option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB "Enable Raylib for {{REPLACE_ME_PROJECT_NAME}}" OFF)
-  option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_FLECS "Enable flecs for {{REPLACE_ME_PROJECT_NAME}}" OFF)
-  option({{REPLACE_ME_PROJECT_NAME}}_BUILD_APPS "Enable App building for {{REPLACE_ME_PROJECT_NAME}}" ON)
+  option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB "Enable Raylib for {{REPLACE_ME_PROJECT_NAME}}" {{REPLACE_ME_CMAKE_RAYLIB}})
+  option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_FLECS "Enable flecs for {{REPLACE_ME_PROJECT_NAME}}" {{REPLACE_ME_CMAKE_FLECS}})
+  option({{REPLACE_ME_PROJECT_NAME}}_BUILD_APPS "Enable App building for {{REPLACE_ME_PROJECT_NAME}}" {{REPLACE_ME_CMAKE_BUILD_APPS}})
+  option({{REPLACE_ME_PROJECT_NAME}}_STANDALONE "Enable App building for {{REPLACE_ME_PROJECT_NAME}}" {{REPLACE_ME_CMAKE_STANDALONE}})
   # create a symbolic link to the compile_commands file:
   file(
     CREATE_LINK
@@ -38,7 +39,12 @@ else()
   set({{REPLACE_ME_PROJECT_NAME}}_ENABLE_GLOBS TRUE)
 endif()
 
-add_subdirectory(${CMAKE_PROJECT_NAME}/library/src)
+
+if({{REPLACE_ME_PROJECT_NAME}}_STANDALONE)
+  add_subdirectory(src/)
+else()
+  add_subdirectory(${CMAKE_PROJECT_NAME}/library/src)
+endif()
 
 # adjust or override some CMake defaults
 include(cmake/OverrideCMakeDefaults.cmake)
@@ -69,7 +75,11 @@ if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_CATCH2_TESTS)
   include(Catch)
 
   include(cmake/AddCatch2Tests.cmake)
-  add_subdirectory(${CMAKE_PROJECT_NAME}/library/tests)
+  if(NOT {{REPLACE_ME_PROJECT_NAME}}_STANDALONE)
+    add_subdirectory(${CMAKE_PROJECT_NAME}/library/tests)
+  else()
+    add_subdirectory(tests/)
+  endif()
 endif()
 
 # Web Configurations
@@ -146,3 +156,4 @@ if({{REPLACE_ME_PROJECT_NAME}}_BUILD_APPS)
     endif()
   endforeach()
 endif()
+
