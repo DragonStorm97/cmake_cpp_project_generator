@@ -4,7 +4,8 @@ name: CMake on a single platform
 
 on:
   push:
-    branches: ["main"]
+    tags:
+      - "*"
   pull_request:
     branches: ["main"]
 
@@ -23,6 +24,10 @@ jobs:
     #   NOTE: the web preset probably doesn't have to be run for all of them...
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      discussions: write
 
     # TODO: get actions-cache-folder working
     steps:
@@ -65,3 +70,27 @@ jobs:
 
       - name: Run CMake Workflow
         run: cmake --workflow --preset=${{env.BUILD_PRESET}}
+
+      - uses: fregante/setup-git-user@v2
+      - name: Create release assets branch
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          git checkout --orphan release-artifacts-${{github.ref_name}} &&
+          git rm --cached -r . && 
+          git add release/raw/ -f &&
+          git status &&
+          git commit -m "release" &&
+          git push -f --set-upstream origin release-artifacts-${{github.ref_name}} &&
+          git checkout -b release-artifacts-latest &&
+          git push -f --set-upstream origin release-artifacts-latest
+
+      - name: Pack raw files
+        if: startsWith(github.ref, 'refs/tags/')
+        run: find release/raw/*/ -maxdepth 0 -type d -exec sh -c 'cd "{}" && zip -r "../../$(basename "{}").zip" ./*' \;
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            release/*.zip

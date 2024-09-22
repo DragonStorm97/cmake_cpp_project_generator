@@ -27,6 +27,14 @@ if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB)
     # Tell Emscripten to build an example.html file.
     set_target_properties(${LIB_NAME} PROPERTIES SUFFIX ".html")
     target_link_options(${LIB_NAME} PUBLIC "-sUSE_GLFW=3")
+    # copy binaries to release folder
+    add_custom_command(
+      TARGET ${LIB_NAME} POST_BUILD
+      # COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE_DIR:${LIB_NAME}>/${LIB_NAME}.html ${PROJECT_SOURCE_DIR}/release/raw/${LIB_NAME}/${LIB_NAME}.html
+      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE_DIR:${LIB_NAME}>/${LIB_NAME}.js ${PROJECT_SOURCE_DIR}/release/raw/${LIB_NAME}/${LIB_NAME}.js
+      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE_DIR:${LIB_NAME}>/${LIB_NAME}.wasm ${PROJECT_SOURCE_DIR}/release/raw/${LIB_NAME}/${LIB_NAME}.wasm
+      COMMENT "Release ${LIB_NAME}/${LIB_NAME}.html, ${LIB_NAME}.js, and ${LIB_NAME}.wasm"
+      DEPENDS ${LIB_NAME})
   endif()
 
   # Checks if OSX and links appropriate frameworks (Only required on MacOS)
@@ -49,3 +57,13 @@ target_include_directories(${LIB_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/${CMAKE_PROJ
 #   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 #                          $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
 # )
+
+# copy binaries to release folder
+add_custom_command(
+  TARGET ${LIB_NAME} POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${LIB_NAME}> ${PROJECT_SOURCE_DIR}/release/raw/${LIB_NAME}/$<TARGET_FILE_NAME:${LIB_NAME}>
+  # COMMAND ${CMAKE_COMMAND} -E tar "cfv" "${PROJECT_SOURCE_DIR}/release/${LIB_NAME}.zip" --format=zip  -- ${PROJECT_SOURCE_DIR}/release/raw/${LIB_NAME}/
+  COMMENT "Release ${LIB_NAME}/${LIB_NAME}"
+  DEPENDS ${LIB_NAME})
+
+
