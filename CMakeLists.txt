@@ -116,6 +116,31 @@ if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB)
     endif()
   endif()
 
+# raylib-cpp
+  find_package(raylib_cpp QUIET)
+  if(NOT raylib_cpp_FOUND)
+    if(NOT DEFINED RAYLIB_CPP_VERSION)
+      set(RAYLIB_CPP_VERSION v5.0.2)
+    endif()
+    include(FetchContent)
+    FetchContent_Declare(
+          raylib_cpp
+          GIT_REPOSITORY https://github.com/RobLoach/raylib-cpp.git
+          GIT_TAG ${RAYLIB_CPP_VERSION}
+    )
+    FetchContent_MakeAvailable(raylib_cpp)
+  endif()
+
+# Fetch raygui
+  FetchContent_Declare(
+    raygui
+    GIT_REPOSITORY https://github.com/raysan5/raygui.git
+    GIT_TAG 4.0
+  )
+  FetchContent_MakeAvailable(raygui)
+  
+# Include the raygui header path
+  include_directories(SYTSEM ${raygui_SOURCE_DIR}/src)
   # add_custom_command(
   #   TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
   #   COMMENT "Copy Resources"

@@ -20,7 +20,7 @@ target_link_libraries(${APP_NAME} PRIVATE {{REPLACE_ME_LIB_NAME}})
 
 if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB)
   #set(raylib_VERBOSE 1)
-  target_link_libraries(${APP_NAME} PRIVATE raylib)
+  target_link_libraries(${APP_NAME} PRIVATE raylib raylib_cpp)
 
   # Web Configurations
   if(${PLATFORM} STREQUAL "Web")
