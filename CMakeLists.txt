@@ -16,9 +16,30 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set({{REPLACE_ME_PROJECT_NAME}}_IS_TOP_LEVEL_PROJECT TRUE)
 endif()
 
+# Check if the project is the top-level project
+set(softrays_IS_TOP_LEVEL_PROJECT FALSE)
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  set(softrays_IS_TOP_LEVEL_PROJECT TRUE)
+endif()
+
+# adjust or override some CMake defaults
+include(cmake/OverrideCMakeDefaults.cmake)
+
+# default compiler options and warnings
+include(cmake/DefaultCompilerOptionsAndWarnings.cmake)
+
+# static analyzers
+include(cmake/StaticAnalyzers.cmake)
+
+# sanitizers
+include(cmake/Sanitizers.cmake)
+
+include(cmake/Coverage.cmake)
+
 if({{REPLACE_ME_PROJECT_NAME}}_IS_TOP_LEVEL_PROJECT)
   # Generate compile_commands.json
   set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+  option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_COVERAGE "Enable Coverage for {{REPLACE_ME_PROJECT_NAME}}" ON)
   option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_CATCH2_TESTS "Enable Tests for {{REPLACE_ME_PROJECT_NAME}}" ON)
   option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_GLOBS "Enable GLOB sourcing for {{REPLACE_ME_PROJECT_NAME}}" ON)
   option({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB "Enable Raylib for {{REPLACE_ME_PROJECT_NAME}}" {{REPLACE_ME_CMAKE_RAYLIB}})
@@ -35,6 +56,7 @@ if({{REPLACE_ME_PROJECT_NAME}}_IS_TOP_LEVEL_PROJECT)
 else()
   # disable tests if we're a sub-project
   set({{REPLACE_ME_PROJECT_NAME}}_ENABLE_CATCH2_TESTS FALSE)
+  set({{REPLACE_ME_PROJECT_NAME}}_ENABLE_COVERAGE OFF)
   # enable globs if we're a sub-project?
   set({{REPLACE_ME_PROJECT_NAME}}_ENABLE_GLOBS TRUE)
 endif()
@@ -45,18 +67,6 @@ if({{REPLACE_ME_PROJECT_NAME}}_STANDALONE)
 else()
   add_subdirectory(${CMAKE_PROJECT_NAME}/library/src)
 endif()
-
-# adjust or override some CMake defaults
-include(cmake/OverrideCMakeDefaults.cmake)
-
-# default compiler options and warnings
-include(cmake/DefaultCompilerOptionsAndWarnings.cmake)
-
-# static analyzers
-include(cmake/StaticAnalyzers.cmake)
-
-# sanitizers
-include(cmake/Sanitizers.cmake)
 
 # Catch2 v3
 if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_CATCH2_TESTS)
@@ -181,4 +191,6 @@ if({{REPLACE_ME_PROJECT_NAME}}_BUILD_APPS)
     endif()
   endforeach()
 endif()
+
+include(Coverage)
 

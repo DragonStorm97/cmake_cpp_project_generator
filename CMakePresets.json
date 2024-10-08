@@ -15,7 +15,7 @@
       "installDir": "${sourceDir}/install/default",
       "cacheVariables": {
         "PLATFORM": "Desktop",
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Debug"
       },
       "environment": {
         "PATH": "$env{HOME}/ninja/bin:$penv{PATH}"
@@ -35,6 +35,10 @@
       "inherits": "default",
       "displayName": "Windows-only configuration",
       "description": "This build is only available on Windows",
+      "cacheVariables": {
+        "PLATFORM": "Desktop",
+        "CMAKE_BUILD_TYPE": "Release"
+      },
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",

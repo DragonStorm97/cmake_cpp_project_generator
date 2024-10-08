@@ -54,6 +54,8 @@ set_target_properties(${APP_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(${APP_NAME} PUBLIC cxx_std_{{REPLACE_ME_STD_VERSION}})
 target_compile_options(${APP_NAME} PRIVATE ${SANITIZER_FLAGS} ${DEFAULT_COMPILER_OPTIONS_AND_WARNINGS})
 
+enable_coverage(${LIB_NAME})
+
 # copy binaries to release folder
 add_custom_command(
   TARGET ${APP_NAME} POST_BUILD

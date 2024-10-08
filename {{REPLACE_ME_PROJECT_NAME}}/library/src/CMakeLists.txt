@@ -47,6 +47,7 @@ endif()
 
 set_target_properties(${LIB_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(${LIB_NAME} PUBLIC cxx_std_{{REPLACE_ME_STD_VERSION}})
+enable_coverage(${LIB_NAME})
 target_compile_options(${LIB_NAME} PRIVATE ${SANITIZER_FLAGS} ${DEFAULT_COMPILER_OPTIONS_AND_WARNINGS})
 target_link_libraries(${LIB_NAME} PRIVATE ${SANITIZER_FLAGS})
 target_include_directories(${LIB_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include/${CMAKE_PROJECT_NAME})
