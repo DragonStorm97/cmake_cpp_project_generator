@@ -8,12 +8,21 @@
 #include <cmath>
 #if defined(PLATFORM_WEB)
 #include <emscripten.h>
+#include <emscripten/html5.h>
 #endif
 
 void UpdateDrawFrame()
 {
   const double time = GetTime();
 
+#if defined(PLATFORM_WEB)
+  {
+    double cssW = 0;
+    double cssH = 0;
+    emscripten_get_element_css_size("#canvas", &cssW, &cssH);
+    SetWindowSize(static_cast<int>(cssW), static_cast<int>(cssH));
+  }
+#endif
   BeginDrawing();
 
   ClearBackground(Color{
@@ -33,6 +42,10 @@ int main()
   InitWindow(640, 480, "Hello, Raylib");
 
 #if defined(PLATFORM_WEB)
+  double cssW = 0;
+  double cssH = 0;
+  emscripten_get_element_css_size("#canvas", &cssW, &cssH);
+  SetWindowSize(static_cast<int>(cssW), static_cast<int>(cssH));
   // emscripten_set_main_loop_arg(&UpdateDrawFrame, &parm, 60, 1);
   emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
 #else
