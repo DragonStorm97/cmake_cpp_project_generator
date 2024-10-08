@@ -28,6 +28,7 @@ int main()
   InitWindow(640, 480, "Hello, Raylib");
 
 #if defined(PLATFORM_WEB)
+  // emscripten_set_main_loop_arg(&UpdateDrawFrame, &parm, 60, 1);
   emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
 #else
   SetTargetFPS(60);
