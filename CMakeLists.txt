@@ -193,5 +193,3 @@ if({{REPLACE_ME_PROJECT_NAME}}_BUILD_APPS)
   endforeach()
 endif()
 
-include(Coverage)
-
