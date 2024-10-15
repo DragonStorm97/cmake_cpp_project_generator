@@ -27,6 +27,13 @@ if({{REPLACE_ME_PROJECT_NAME}}_ENABLE_RAYLIB)
     # Tell Emscripten to build an example.html file.
     set_target_properties(${APP_NAME} PROPERTIES SUFFIX ".html")
     target_link_options(${APP_NAME} PUBLIC "-sUSE_GLFW=3")
+    target_link_options(${APP_NAME} PUBLIC "-sALLOW_MEMORY_GROWTH=1")
+
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../resources/)
+      target_link_options(${APP_NAME} PUBLIC "--use-preload-plugins")
+      target_link_options(${APP_NAME} PUBLIC --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/../resources/@resources/)
+    endif()
+    
     # copy binaries to release folder
     add_custom_command(
       TARGET ${APP_NAME} POST_BUILD
@@ -66,4 +73,12 @@ add_custom_command(
   # COMMAND ${CMAKE_COMMAND} -E tar "cfv" "${PROJECT_SOURCE_DIR}/release/${APP_NAME}.zip" --format=zip  -- ${PROJECT_SOURCE_DIR}/release/raw/${APP_NAME}/
   COMMENT "Release ${APP_NAME}/${APP_NAME}"
   DEPENDS ${APP_NAME})
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../resources/)
+  add_custom_command(
+    TARGET ${APP_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/../resources/ ${PROJECT_SOURCE_DIR}/release/raw/${APP_NAME}/resources/
+    COMMENT "Release ${APP_NAME}/${APP_NAME}/resources"
+    DEPENDS ${APP_NAME})
+endif()
 

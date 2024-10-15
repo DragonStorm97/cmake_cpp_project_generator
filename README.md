@@ -24,6 +24,7 @@ Basically just this: [catch2-examples](https://github.com/Toxe/catch2-examples)
   - cppcheck?
 - CMAKE_PROJECT_NAME(top level project name) vs PROJECT_NAME(name given with the project setting)!
 - PLATFORM (from raylib): `enum_option(PLATFORM "Desktop;Web;Android;Raspberry Pi;DRM;SDL" "Platform to build for.")`
+- copy resources to build directory (so that tests using resources will work too)
 
 ## Features
 
@@ -36,6 +37,7 @@ Basically just this: [catch2-examples](https://github.com/Toxe/catch2-examples)
 - compile_commands.json (make sure it's generated) OR clang options file
 - make `app` folder actually be `apps` folder, then build them each as independent executables!
 - Add emscripten as a dependency if PLATFORM==Web
+- Copies and packages files in a resource/ folder under each app, and the project root (with wasm support)
 
 ## CMake vars
 

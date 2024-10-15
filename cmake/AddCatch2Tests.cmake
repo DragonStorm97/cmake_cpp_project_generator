@@ -36,6 +36,11 @@ function(add_catch2_tests app_name is_lib is_standalone)
       if(NOT is_standalone)
         target_link_libraries(${test_name} PRIVATE {{REPLACE_ME_LIB_NAME}})
       endif()
+
+      if(softrays_ENABLE_RAYLIB)
+        target_link_libraries(${test_name} PRIVATE raylib raylib_cpp)
+      endif()
+      
       # target_link_libraries(${test_name} PRIVATE ${app_name} Catch2::Catch2WithMain)
       target_link_libraries(${test_name} PRIVATE Catch2::Catch2WithMain)
 
